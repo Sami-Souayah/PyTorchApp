@@ -1,4 +1,8 @@
 import yfinance as yf
+from sklearn.preprocessing import MinMaxScaler
+from datetime import datetime as dt
 
-data = yf.download("AAPL", start="2015-01-01", end="2024-12-22")
-print(data.tail())
+current = dt.now().date()
+data = yf.download("AAPL", period='6mo')
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(data['Close'].values.reshape(-1,1))
