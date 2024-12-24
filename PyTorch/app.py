@@ -14,9 +14,10 @@ def evaluate_stuff():
 
 def train():
     trnmdl = Training_Model()
-    trnmdl.train(240)
+    trnmdl.train(100)
     trnmdl.test()
     trnmdl.graph_test()
 
 
-print(evaluate_stuff())
+
+train()
