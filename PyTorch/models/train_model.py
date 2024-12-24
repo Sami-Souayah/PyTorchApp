@@ -1,9 +1,8 @@
 import torch.optim as optim
-import nn as mdl
+from models.utils.nn import LSTMModel
 from Dsets.training_dataset import Training_Dataset
 import torch
 import matplotlib.pyplot as plt
-
 
 
 
@@ -14,7 +13,7 @@ class Training_Model():
         self.Y_train = torch.tensor(inst.Y_train, dtype=torch.float32).unsqueeze(1)  
         self.X_test = torch.tensor(inst.X_test, dtype=torch.float32)
         self.Y_test = torch.tensor(inst.Y_test, dtype=torch.float32).unsqueeze(1)
-        self.model = mdl.model
+        self.model = LSTMModel()
         self.loss_func = torch.nn.MSELoss()
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
 

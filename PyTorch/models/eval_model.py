@@ -1,5 +1,5 @@
 import torch
-from nn import LSTMModel  
+from models.utils.nn import LSTMModel  
 from Dsets.training_dataset import Training_Dataset
 from Dsets.dataset import Dataset
 
