@@ -21,5 +21,4 @@ for i in range(len(normalized_prices) - seq_length):
 X_train = np.array(X_train)  
 Y_train = np.array(Y_train) 
 
-print(f"X_train shape: {X_train.shape}")
-print(f"Y_train shape: {Y_train.shape}")
+X_train, X_test, Y_train, Y_test = train_test_split(X_train, Y_train, test_size=0.2, random_state=42)
