@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 
 current = dt.now().date()
-#data = yf.download("AAPL", period='6mo')
-data = yf.download("RTX", period='6mo')
+data = yf.download("AAPL", period='6mo')
+
 closing_prices = data['Close']
 scaler = MinMaxScaler(feature_range=(0, 1))
 normalized_prices = scaler.fit_transform(closing_prices.values.reshape(-1, 1))
@@ -19,7 +19,10 @@ for i in range(len(normalized_prices) - seq_length):
     X_train.append(normalized_prices.iloc[i:i + seq_length].values)  
     Y_train.append(normalized_prices.iloc[i + seq_length].values[0])  
 
+
 X_train = np.array(X_train)  
 Y_train = np.array(Y_train) 
 
 X_train, X_test, Y_train, Y_test = train_test_split(X_train, Y_train, test_size=0.2, random_state=42)
+
+
