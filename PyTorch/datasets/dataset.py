@@ -1,7 +1,6 @@
 import yfinance as yf
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
-import torch
 
 seql = 50
 
