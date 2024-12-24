@@ -9,10 +9,13 @@ import pandas as pd
 class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
-        self.data = data = yf.download("AAPL", period='6mo')
+        self.data = yf.download("AAPL", period='6mo')
         self.seql = 50
         self.scaler = MinMaxScaler(feature_range=(0, 1))
-        self.X_train, self.X_test, self.Y_test, self.Y_train = None
+        self.X_train = None
+        self.X_test =None
+        self.Y_test= None
+        self.Y_train = None
 
     def create_data(self):
         closing_prices = self.data['Close']
