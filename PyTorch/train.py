@@ -2,6 +2,8 @@ import torch.optim as optim
 import nn as mdl
 from dataset import X_train,Y_train, X_test, Y_test
 import torch
+import matplotlib.pyplot as plt
+
 
 
 X_train = torch.tensor(X_train, dtype=torch.float32)  
@@ -26,6 +28,24 @@ def train(num_epochs, model, loss_func, optim):
         optimizer.step()
         print(f"Epoch: {i+1} Loss: {loss.item():>4f}")
 
-train(10, model, loss_func, optimizer)
+def evaluate(model, X_test, Y_test, loss_func):
+    model.eval() 
+    with torch.no_grad():
+        predictions = model(X_test)
+        loss = loss_func(predictions, Y_test)
+        print(f"Test Loss: {loss.item():.4f}")
 
-torch.save(model.state_dict(), "lstm_model.pth")
+
+train(250, model, loss_func, optimizer)
+
+evaluate(model,X_test,Y_test,loss_func)
+
+torch.save(model.state_dict(), "best_lstm_model.pth")
+
+predictions = model(X_test).detach().numpy()
+actual = Y_test.numpy()
+
+plt.plot(predictions, label="Predicted")
+plt.plot(actual, label="Actual")
+plt.legend()
+plt.show()

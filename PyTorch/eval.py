@@ -1,12 +1,20 @@
+import torch
+from nn import LSTMModel  
+from dataset import scaler
+from dataset import X_input
+
+X_input = torch.tensor(X_input, dtype=torch.float32)
 
 
+model = LSTMModel(input_size=1, hidden_size=50, num_layers=2)
 
-input_sequence = torch.tensor(dataset.scaled_data, dtype=torch.float32).unsqueeze(0)
+model.load_state_dict(torch.load("best_lstm_model.pth", weights_only=True))
+model.eval() 
 
-model.eval()  # Set the model to evaluation mode
 with torch.no_grad():
-    predicted_price = model(input_sequence)  # Output shape: [1, 1]
+    predicted_price = model(X_input)
 
-# Denormalize the predicted price
-predicted_price = scaler.inverse_transform(predicted_price.numpy())
-print(f"Predicted Stock Price: ${predicted_price[0][0]:.2f}")
+# Convert the predicted price back to the original scale (reverse the normalization)
+predicted_price = scaler.inverse_transform(predicted_price.detach().numpy())
+
+print(f"Predicted stock price for the next day: {predicted_price[0][0]}")

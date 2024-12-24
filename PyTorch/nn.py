@@ -1,7 +1,4 @@
-import torch
 from torch import nn
-from torch import optim
-import dataset
 
 
 class LSTMModel(nn.Module):
@@ -15,4 +12,3 @@ class LSTMModel(nn.Module):
         return self.fc(lstm_out[:, -1, :])
 
 model = LSTMModel(input_size=1, hidden_size=50, num_layers=2)
-print(model)
