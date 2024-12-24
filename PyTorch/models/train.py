@@ -19,35 +19,32 @@ class Training_Model():
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
 
 
-    def train(num_epochs, model, loss_func, optim):
+    def train(self,num_epochs):
         for i in range(num_epochs):
-            model.train()
+            self.model.train()
             optim.zero_grad()
-            output = model(X_train)
-            loss = loss_func(output, Y_train)
+            output = self.model(self.X_train)
+            loss = self.loss_func(output, self.Y_train)
 
             loss.backward()
-            optimizer.step()
+            self.optimizer.step()
             print(f"Epoch: {i+1} Loss: {loss.item():>4f}")
 
-def evaluate(model, X_test, Y_test, loss_func):
-    model.eval() 
-    with torch.no_grad():
-        predictions = model(X_test)
-        loss = loss_func(predictions, Y_test)
-        print(f"Test Loss: {loss.item():.4f}")
+    def test(self):
+        self.model.eval() 
+        with torch.no_grad():
+            predictions = self.model(self.X_test)
+            loss = self.loss_func(predictions, self.Y_test)
+            print(f"Test Loss: {loss.item():.4f}")
+    
+    def save_test(self):
+        torch.save(self.model.state_dict(), 'best_lstm_model.pth')
 
-
-train(250, model, loss_func, optimizer)
-
-evaluate(model,X_test,Y_test,loss_func)
-
-torch.save(model.state_dict(), "best_lstm_model.pth")
-
-predictions = model(X_test).detach().numpy()
-actual = Y_test.numpy()
-
-plt.plot(predictions, label="Predicted")
-plt.plot(actual, label="Actual")
-plt.legend()
-plt.show()
+    
+    def graph_test(self):
+        predictions = self.model(self.X_test).detach().numpy()
+        actual = self.Y_test.numpy()
+        plt.plot(predictions, label="Predicted")
+        plt.plot(actual, label="Actual")
+        plt.legend()
+        plt.show()
