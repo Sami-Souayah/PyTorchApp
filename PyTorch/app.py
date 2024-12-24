@@ -5,8 +5,6 @@ from Dsets.dataset import Dataset
 
 
 
-
-
 def evaluate_stuff():
     inste = Evaluate('RTX')
     return inste.eval()
@@ -14,10 +12,9 @@ def evaluate_stuff():
 
 def train():
     trnmdl = Training_Model()
-    trnmdl.train(100)
+    trnmdl.train(120)
     trnmdl.test()
     trnmdl.graph_test()
 
 
-
-train()
+print(evaluate_stuff())

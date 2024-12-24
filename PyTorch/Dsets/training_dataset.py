@@ -9,8 +9,10 @@ import pandas as pd
 class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
-        self.data = yf.download("BTC-USD", period='6mo')
-        self.seql = 180
+        self.data = yf.download("AAPL", period='1y')
+        print(self.data)
+        print(len(self.data['Close']))
+        self.seql = len(self.data['Close'])-3
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.X_train = None
         self.X_test =None
