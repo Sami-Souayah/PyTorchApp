@@ -1,7 +1,7 @@
 import torch
 from nn import LSTMModel  
-from datasets.training_dataset import scaler
-from datasets.dataset import X_input
+from Dsets.training_dataset import scaler
+from Dsets.dataset import X_input
 
 
 X_input = torch.tensor(X_input, dtype=torch.float32)
