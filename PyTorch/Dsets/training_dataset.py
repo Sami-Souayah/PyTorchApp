@@ -10,7 +10,7 @@ class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
         self.data = yf.download("AAPL", period='2y')
-        self.seql = len(self.data['Close'])-10
+        self.seql = len(self.data[0]['Close'])-10
         self.ahead = 7
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.X_train = None
@@ -41,3 +41,5 @@ class Training_Dataset():
         Y_train = np.array(Y_train)
 
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X_train, Y_train, test_size=0.2, random_state=42)
+
+
