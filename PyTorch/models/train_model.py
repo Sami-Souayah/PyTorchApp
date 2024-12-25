@@ -37,13 +37,6 @@ class Training_Model():
             torch.save(self.model.state_dict(), 'best_lstm_model.pth')
             print(f"Test Loss: {loss.item():.4f}")
     
-    def save_test(self):
-         try:
-            torch.save(self.model.state_dict(), 'best_lstm_model.pth')
-            print("Model saved!")
-         except Exception as e:
-            print(f"Error saving model: {e}")
-    
     def graph_test(self):
         predictions = self.model(self.X_test).detach().numpy()
         actual = self.Y_test.numpy()
