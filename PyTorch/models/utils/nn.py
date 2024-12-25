@@ -8,7 +8,7 @@ class LSTMModel(nn.Module):
         hidden_size=50
         num_layers=2
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, 1) 
+        self.fc = nn.Linear(hidden_size, 7) 
 
     def forward(self, x):
         lstm_out, _ = self.lstm(x) 

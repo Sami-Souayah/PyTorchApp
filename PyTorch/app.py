@@ -14,4 +14,6 @@ def train():
     trnmdl.test()
 
 
-print(evaluate_stuff())
+
+train()
+#print(evaluate_stuff())

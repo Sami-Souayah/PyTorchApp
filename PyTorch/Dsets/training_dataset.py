@@ -27,10 +27,15 @@ class Training_Dataset():
         X_train, Y_train = [], []
         for i in range(len(normalized_prices) - self.seql-self.ahead):
             X_train.append(normalized_prices.iloc[i:i + self.seql].values)  
-            Y_train.append(normalized_prices.iloc[i + self.seql+self.ahead].values[0])  
+            Y_train.append(normalized_prices.iloc[i + self.seql:i+self.seql+self.ahead].values.flatten())  
+
         X_train = np.array(X_train)  
-        Y_train = np.array(Y_train) 
+        Y_train = np.array(Y_train)
 
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X_train, Y_train, test_size=0.2, random_state=42)
 
 
+
+
+pop = Training_Dataset()
+pop.create_data()
