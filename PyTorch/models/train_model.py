@@ -5,8 +5,6 @@ import torch
 import matplotlib.pyplot as plt
 import os
 
-
-
 class Training_Model():
     def __init__(self):
         inst = Training_Dataset()

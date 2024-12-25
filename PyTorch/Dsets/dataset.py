@@ -6,7 +6,8 @@ import torch
 
 class Dataset():
     def __init__(self, data):
-        self.data = yf.download(data, period='1y')
+        self.data = yf.download(data, period='2y')
+        print(self.data.tail())
         self.seql = len(self.data['Close'])-3
         self.X_input = None
         self.scaler = MinMaxScaler(feature_range=(0, 1))

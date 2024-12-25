@@ -9,10 +9,10 @@ import pandas as pd
 class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
-        self.data = yf.download("AAPL", period='1y')
-        print(self.data)
-        print(len(self.data['Close']))
-        self.seql = len(self.data['Close'])-3
+        self.data = yf.download("AAPL", period='2y')
+        print(self.data.tail())
+        self.seql = len(self.data['Close'])-10
+        self.ahead = 7
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.X_train = None
         self.X_test =None
@@ -25,9 +25,9 @@ class Training_Dataset():
         normalized_prices = self.scaler.fit_transform(closing_prices.values.reshape(-1, 1))
         normalized_prices = pd.DataFrame(normalized_prices, columns=["Close"])
         X_train, Y_train = [], []
-        for i in range(len(normalized_prices) - self.seql):
+        for i in range(len(normalized_prices) - self.seql-self.ahead):
             X_train.append(normalized_prices.iloc[i:i + self.seql].values)  
-            Y_train.append(normalized_prices.iloc[i + self.seql].values[0])  
+            Y_train.append(normalized_prices.iloc[i + self.seql+self.ahead].values[0])  
         X_train = np.array(X_train)  
         Y_train = np.array(Y_train) 
 
