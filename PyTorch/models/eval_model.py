@@ -18,6 +18,7 @@ class Evaluate():
         with torch.no_grad():
             predicted_price = self.model(self.X_input)
         predicted_price = self.scaler.inverse_transform(predicted_price.detach().numpy())
-        return f"Predicted closing price for the next week: {predicted_price[0][0]}"
+        predicted_price = round(float(predicted_price[0][0]),2)
+        return f"Predicted closing price for the next week: {predicted_price}"
     
 

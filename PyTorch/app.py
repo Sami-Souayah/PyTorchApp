@@ -15,5 +15,4 @@ def train():
 
 
 
-train()
-#print(evaluate_stuff())
+print(evaluate_stuff())
