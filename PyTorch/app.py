@@ -4,7 +4,7 @@ from Dsets.dataset import Dataset
 
 
 def evaluate_stuff():
-    inste = Evaluate('AAPL')
+    inste = Evaluate('RTX')
     return inste.eval()
 
 
