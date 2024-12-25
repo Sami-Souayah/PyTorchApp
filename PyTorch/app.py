@@ -7,12 +7,4 @@ def evaluate_stuff():
     inste = Evaluate('AAPL')
     return inste.eval()
 
-
-def train():
-    trnmdl = Training_Model()
-    trnmdl.train(100)
-    trnmdl.test()
-
-
-
 print(evaluate_stuff())
