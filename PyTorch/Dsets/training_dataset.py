@@ -20,16 +20,24 @@ class Training_Dataset():
 
     def create_data(self):
         closing_prices = self.data['Close']
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        vol_dat = self.data['Volume']
+        volatil_dat = self.data['High']-self.data['Low']
+        normalized_volatil = self.scaler.fit_transform(volatil_dat.values.reshape(-1,1))
+        normalized_volatil = pd.DataFrame(normalized_volatil,columns=['Daily Range'])
+        normalized_vol = self.scaler.fit_transform(vol_dat.values.reshape(-1,1))
+        normalized_vol = pd.DataFrame(normalized_vol,columns=['Volume'])
         normalized_prices = self.scaler.fit_transform(closing_prices.values.reshape(-1, 1))
         normalized_prices = pd.DataFrame(normalized_prices, columns=["Close"])
         X_train, Y_train = [], []
         for i in range(len(normalized_prices) - self.seql-self.ahead):
-            X_train.append(normalized_prices.iloc[i:i + self.seql].values)  
+            closeprices = normalized_prices.iloc[i:i + self.seql].values
+            volumedat = normalized_vol.iloc[i:i + self.seql].values
+            volatildat = normalized_volatil.iloc[i:i+self.seql].values
+            combined = np.column_stack((closeprices,volumedat,volatildat))
+            X_train.append(combined)
             Y_train.append(normalized_prices.iloc[i + self.seql:i+self.seql+self.ahead].values.flatten())  
 
         X_train = np.array(X_train)  
         Y_train = np.array(Y_train)
 
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X_train, Y_train, test_size=0.2, random_state=42)
-

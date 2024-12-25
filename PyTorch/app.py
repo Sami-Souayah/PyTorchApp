@@ -4,13 +4,13 @@ from Dsets.dataset import Dataset
 
 
 def evaluate_stuff():
-    inste = Evaluate('RTX')
+    inste = Evaluate('NVDA')
     return inste.eval()
 
 
 def train():
     trnmdl = Training_Model()
-    trnmdl.train(100)
+    trnmdl.train(90)
     trnmdl.test()
 
 

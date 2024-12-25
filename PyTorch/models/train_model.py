@@ -36,11 +36,22 @@ class Training_Model():
             loss = self.loss_func(predictions, self.Y_test)
             torch.save(self.model.state_dict(), 'best_lstm_model.pth')
             print(f"Test Loss: {loss.item():.4f}")
-    
     def graph_test(self):
-        predictions = self.model(self.X_test).detach().numpy()
-        actual = self.Y_test.numpy()
-        plt.plot(predictions, label="Predicted")
-        plt.plot(actual, label="Actual")
+        self.model.eval() 
+        with torch.no_grad():
+            predictions = self.model(self.X_test).detach().numpy()
+            actual = self.Y_test.numpy()
+
+        if predictions.shape != actual.shape:
+            predictions = predictions.flatten()
+            actual = actual.flatten()
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(predictions, label="Predicted", color='blue', linestyle='--')
+        plt.plot(actual, label="Actual", color='orange', linestyle='-')
+        plt.title("Actual vs Predicted Stock Prices")
+        plt.xlabel("Test Samples")
+        plt.ylabel("Normalized Prices")
         plt.legend()
+        plt.grid(True)
         plt.show()
