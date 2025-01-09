@@ -42,14 +42,20 @@ class Training_Model():
             predictions = self.model(self.X_test).detach().numpy()
             actual = self.Y_test.numpy()
 
-        if predictions.shape != actual.shape:
-            predictions = predictions.flatten()
-            actual = actual.flatten()
+        predictions = predictions.flatten()
+        actual = actual.flatten()
+
+        num_samples = min(len(predictions), len(actual))
+        predictions = predictions[:num_samples]
+        actual = actual[:num_samples]
 
         plt.figure(figsize=(10, 6))
-        plt.plot(predictions, label="Predicted", color='blue', linestyle='--')
-        plt.plot(actual, label="Actual", color='orange', linestyle='-')
-        plt.title("Actual vs Predicted Stock Prices")
+        plt.scatter(range(len(predictions)), predictions, label="Predicted", color='blue', marker='o', alpha=0.7)
+        plt.scatter(range(len(actual)), actual, label="Actual", color='orange', marker='x', alpha=0.7)
+        plt.plot(range(num_samples), predictions, color='blue', linestyle='--', alpha=0.5)
+        plt.plot(range(num_samples), actual, color='orange', linestyle='-', alpha=0.5)
+        plt.ylim(0.9,1)
+        plt.title("Predicted vs Actual Stock Prices")
         plt.xlabel("Test Samples")
         plt.ylabel("Normalized Prices")
         plt.legend()
