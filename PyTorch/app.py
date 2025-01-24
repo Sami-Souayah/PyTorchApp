@@ -4,7 +4,7 @@ from Dsets.dataset import Dataset
 
 
 def evaluate_stuff():
-    inste = Evaluate('RTX')
+    inste = Evaluate('AAPL')
     return inste.eval()
 
 
@@ -13,7 +13,6 @@ def train():
     trnmdl.train(90)
     trnmdl.test()
     trnmdl.graph_test()
-
 
 
 print(evaluate_stuff())

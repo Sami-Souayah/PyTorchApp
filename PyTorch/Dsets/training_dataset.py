@@ -6,10 +6,12 @@ import numpy as np
 import pandas as pd
 
 
+
+
 class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
-        self.data = [yf.download("AAPL", period='2y'),yf.download('TSLA', period='2y')]
+        self.data = [yf.download("AAPL", period='5y'),yf.download('TSLA', period='5y')]
         self.seql = len(self.data[0]['Close'])-10
         self.ahead = 7
         self.scaler = MinMaxScaler(feature_range=(0, 1))
