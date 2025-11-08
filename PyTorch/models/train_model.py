@@ -16,48 +16,47 @@ class Training_Model():
         self.model = LSTMModel()
         self.loss_func = torch.nn.MSELoss()
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
+        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min', factor=0.5, patience=5, verbose=True)
+
 
 
     def train(self,num_epochs):
+        train_losses = []
+
+        train_data = torch.utils.data.TensorDataset(self.X_train,self.Y_train)
+        train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+
         for i in range(num_epochs):
             self.model.train()
-            self.optimizer.zero_grad()
-            output = self.model(self.X_train)
-            loss = self.loss_func(output, self.Y_train)
+            epoch_loss = 0.0
+            for x, y in train_loader:
+                self.optimizer.zero_grad()
+                output = self.model(x)
+                loss = self.loss_func(output, y)
 
-            loss.backward()
-            self.optimizer.step()
+                loss.backward()
+                self.optimizer.step()
+                epoch_loss += loss.item()
+            avg = epoch_loss/len(train_loader)
+            train_losses.append(avg)
+            self.scheduler.step(avg)
             print(f"Epoch: {i+1} Loss: {loss.item():>4f}")
+
+        plt.plot(range(num_epochs), train_losses)
+        plt.title("Training Loss Over Epochs")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.grid(True)
+        plt.show()
 
     def test(self):
         self.model.eval() 
+        best = float('inf')
         with torch.no_grad():
             predictions = self.model(self.X_test)
             loss = self.loss_func(predictions, self.Y_test)
-            torch.save(self.model.state_dict(), 'best_lstm_model.pth')
+            if loss.item() < best:
+                torch.save(self.model.state_dict(), 'best_lstm_model.pth')
             print(f"Test Loss: {loss.item():.4f}")
-    def graph_test(self):
-        self.model.eval() 
-        with torch.no_grad():
-            predictions = self.model(self.X_test).detach().numpy()
-            actual = self.Y_test.numpy()
 
-        predictions = predictions.flatten()
-        actual = actual.flatten()
 
-        num_samples = min(len(predictions), len(actual))
-        predictions = predictions[:num_samples]
-        actual = actual[:num_samples]
-
-        plt.figure(figsize=(10, 6))
-        plt.scatter(range(len(predictions)), predictions, label="Predicted", color='blue', marker='o', alpha=0.7)
-        plt.scatter(range(len(actual)), actual, label="Actual", color='orange', marker='x', alpha=0.7)
-        plt.plot(range(num_samples), predictions, color='blue', linestyle='--', alpha=0.5)
-        plt.plot(range(num_samples), actual, color='orange', linestyle='-', alpha=0.5)
-        plt.ylim(0.9,1)
-        plt.title("Predicted vs Actual Stock Prices")
-        plt.xlabel("Test Samples")
-        plt.ylabel("Normalized Prices")
-        plt.legend()
-        plt.grid(True)
-        plt.show()

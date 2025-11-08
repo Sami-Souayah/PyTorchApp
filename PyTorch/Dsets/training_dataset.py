@@ -6,6 +6,7 @@ import pandas as pd
 import pandas_datareader.data as web
 from dateutil.relativedelta import relativedelta as delta
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from tickers import tickers
 
 
 
@@ -13,13 +14,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
-        self.tickers = [
-            "AAPL", "TSLA", "MSFT", "GOOGL", "AMZN", "META", "NVDA",
-            "JPM", "BAC", "KO", "PFE", "XOM", "WMT", "DIS"
-        ]
+        self.tickers = tickers
         self.seql = 0
         self.ahead = 7
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        self.price_scaler = MinMaxScaler()
+        self.volume_scaler = MinMaxScaler()
+        self.volatility_scaler = MinMaxScaler()
         self.X_train = None
         self.X_test =None
         self.Y_test= None
@@ -37,7 +37,6 @@ class Training_Dataset():
                         return ticker, df
                 except Exception as e:
                     print(f"Stock failed: {ticker} because {e}")
-                    return ticker, None
         
         with ThreadPoolExecutor(max_workers=8) as executor:
             futures = [executor.submit(concur, j) for j in self.tickers]
@@ -46,7 +45,7 @@ class Training_Dataset():
                 if df is not None:
                     result.append(df)
     
-        self.seql = len(result[0]['Close'])-10
+        self.seql = 30
         all_close = np.concatenate([df["Close"].values for df in result]).reshape(-1, 1)
         self.scaler.fit(all_close)
         print(f"Fetched {len(result)} tickers successfully.")
@@ -61,9 +60,9 @@ class Training_Dataset():
             vol_dat = data['Volume'].values.reshape(-1,1)
             volatil_dat = (data['High']-data['Low']).values.reshape(-1,1)
 
-            normalized_volatil = self.scaler.transform(volatil_dat)
-            normalized_vol = self.scaler.transform(vol_dat)
-            normalized_prices = self.scaler.transform(closing_prices)
+            normalized_volatil = self.volatility_scaler.transform(volatil_dat)
+            normalized_vol = self.volume_scaler.transform(vol_dat)
+            normalized_prices = self.price_scaler.transform(closing_prices)
             for i in range(len(normalized_prices) - self.seql-self.ahead):
                 closeprices = normalized_prices[i:i + self.seql]
                 volumedat = normalized_vol[i:i + self.seql]
