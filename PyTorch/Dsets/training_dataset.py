@@ -38,16 +38,22 @@ class Training_Dataset():
                 except Exception as e:
                     print(f"Stock failed: {ticker} because {e}")
         
-        with ThreadPoolExecutor(max_workers=8) as executor:
+        maxthread = min(8, len(self.tickers))
+        with ThreadPoolExecutor(max_workers=maxthread) as executor:
             futures = [executor.submit(concur, j) for j in self.tickers]
             for future in as_completed(futures):
-                ticker, df = future.result()
-                if df is not None:
+                res = future.result()
+                if res:
+                    ticker, df = res
                     result.append(df)
     
         self.seql = 30
         all_close = np.concatenate([df["Close"].values for df in result]).reshape(-1, 1)
-        self.scaler.fit(all_close)
+        all_volume = np.concatenate([df["Volume"].values for df in result]).reshape(-1, 1)
+        all_volatility = np.concatenate([(df["High"] - df["Low"]).values for df in result]).reshape(-1, 1)
+        self.price_scaler.fit(all_close)
+        self.volatility_scaler.fit(all_volatility)
+        self.volume_scaler.fit(all_volume)
         print(f"Fetched {len(result)} tickers successfully.")
         print(result)
         return result
