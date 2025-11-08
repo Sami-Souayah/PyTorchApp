@@ -16,7 +16,7 @@ class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
         self.tickers = tickers
-        self.seql = 0
+        self.seql = 30
         self.ahead = 7
         self.price_scaler = MinMaxScaler()
         self.volume_scaler = MinMaxScaler()
@@ -70,7 +70,6 @@ class Training_Dataset():
                     ticker, df = res
                     result.append(df)
     
-        self.seql = 30
         all_close = np.concatenate([df["Close"].values for df in result]).reshape(-1, 1)
         all_volume = np.concatenate([df["Volume"].values for df in result]).reshape(-1, 1)
         all_volatility = np.concatenate([(df["High"] - df["Low"]).values for df in result]).reshape(-1, 1)
