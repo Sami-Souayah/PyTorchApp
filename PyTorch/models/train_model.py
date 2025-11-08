@@ -13,7 +13,8 @@ class Training_Model():
         self.Y_train = torch.tensor(inst.Y_train, dtype=torch.float32)
         self.X_test = torch.tensor(inst.X_test, dtype=torch.float32)
         self.Y_test = torch.tensor(inst.Y_test, dtype=torch.float32)
-        self.model = LSTMModel()
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = LSTMModel().to(self.device)
         self.loss_func = torch.nn.MSELoss()
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min', factor=0.5, patience=5, verbose=True)
@@ -21,10 +22,11 @@ class Training_Model():
 
 
     def train(self,num_epochs):
+        print("Using device:", self.device)
         train_losses = []
 
         train_data = torch.utils.data.TensorDataset(self.X_train,self.Y_train)
-        train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+        train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True, num_workers=4)
 
         for i in range(num_epochs):
             self.model.train()

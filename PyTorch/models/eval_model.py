@@ -10,10 +10,12 @@ class Evaluate():
         inst.create_input()
         self.scaler = inst.scaler
         self.X_input = inst.X_input
-        self.model = LSTMModel()
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = LSTMModel().to(self.device)
         self.weights = self.model.load_state_dict(torch.load('/Users/sami/Documents/Projects/PyTorchApp/PyTorch/best_lstm_model.pth', weights_only=True))
     
     def eval(self):
+        print("Using device:", self.device)
         self.model.eval()
         with torch.no_grad():
             predicted_price = self.model(self.X_input)

@@ -11,7 +11,7 @@ def evaluate_stuff():
 
 def train():
     trnmdl = Training_Model()
-    trnmdl.train(80)
+    trnmdl.train(40)
     trnmdl.test()
 
 
