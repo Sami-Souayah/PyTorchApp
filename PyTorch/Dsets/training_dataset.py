@@ -2,11 +2,12 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from datetime import datetime as dt
 import numpy as np
-import pandas as pd
 import pandas_datareader.data as web
 from dateutil.relativedelta import relativedelta as delta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tickers import tickers
+import pandas as pd
+import os
 
 
 
@@ -24,15 +25,37 @@ class Training_Dataset():
         self.X_test =None
         self.Y_test= None
         self.Y_train = None
+        self.CACHE_DIR = "cache"
+        os.makedirs(self.CACHE_DIR, exist_ok=True)
+
+    def cached_tickers(self, ticker):
+        cache_file = f"{self.CACHE_DIR}/{ticker}.csv"
+        if os.path.exists(cache_file):
+            try:
+                df= pd.read_csv(cache_file, index_col=0, parse_dates=True)
+                if not df.empty:
+                    print(f"Cache good: {ticker}")
+                    return ticker, df
+            except Exception as e:
+                print(f"Cache read fail: {ticker} error: {e}")
+        try:
+
+            end = dt.now()
+            start = end - delta(years=5)
+            dat = web.DataReader(ticker, "stooq", start, end)
+            df = dat.ffill().bfill()[::-1]
+            df.to_csv(cache_file)
+            return ticker, df
+        except Exception as e:
+            print(f"Fetch failed: {ticker} error: {e}")
+            return ticker, pd.DataFrame()
+
     
     def compile_data(self):
-        end = dt.now()
-        start = end - delta(years=5)
         result = []
         def concur(ticker):
                 try:
-                    dat = web.DataReader(ticker, "stooq", start, end)
-                    df = dat.ffill().bfill()[::-1]
+                    ticker, df = self.cached_tickers(ticker)
                     if not df.empty:
                         return ticker, df
                 except Exception as e:
