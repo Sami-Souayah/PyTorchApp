@@ -17,12 +17,11 @@ class Dataset():
         pop = Training_Dataset()
         self.X_input = None
         self.CACHE_DIR = "cache"
-        _ ,self.data = self.cache_stuff(data)
+        self.name ,self.data = self.cache_stuff(data)
         self.price_scaler = MinMaxScaler()
         self.volume_scaler = MinMaxScaler()
         self.volatility_scaler = MinMaxScaler()
-        self.seql = 30
-        self.ahead = 7
+        self.seql = 365
     
     def cache_stuff(self, ticker):
         cache_file = f"{self.CACHE_DIR}/{ticker}.csv"
@@ -35,13 +34,13 @@ class Dataset():
             except Exception as e:
                 print(f"Cache read fail: {ticker} error: {e}")
         try:
-
             end = dt.now()
             start = end - delta(years=5)
             dat = web.DataReader(ticker, "stooq", start, end)
             df = dat.ffill().bfill()[::-1]
             df.to_csv(cache_file)
             return ticker, df
+            
         except Exception as e:
             print(f"Fetch failed: {ticker} error: {e}")
             return ticker, pd.DataFrame()

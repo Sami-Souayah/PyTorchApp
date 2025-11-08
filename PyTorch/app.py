@@ -5,13 +5,13 @@ from Dsets.training_dataset import Training_Dataset
 
 
 def evaluate_stuff():
-    inste = Evaluate('AAPL')
+    inste = Evaluate('META')
     return inste.eval()
 
 
 def train():
     trnmdl = Training_Model()
-    trnmdl.train(40)
+    trnmdl.train(35)
     trnmdl.test()
 
 

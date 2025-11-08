@@ -16,7 +16,7 @@ class Training_Dataset():
     def __init__(self):
         self.current = dt.now().date()
         self.tickers = tickers
-        self.seql = 30
+        self.seql = 365
         self.ahead = 7
         self.price_scaler = MinMaxScaler()
         self.volume_scaler = MinMaxScaler()
@@ -77,7 +77,6 @@ class Training_Dataset():
         self.volatility_scaler.fit(all_volatility)
         self.volume_scaler.fit(all_volume)
         print(f"Fetched {len(result)} tickers successfully.")
-        print(result)
         return result
 
     def create_data(self):
@@ -98,7 +97,7 @@ class Training_Dataset():
                 combined = np.column_stack((closeprices,volumedat,volatildat))
                 X_train.append(combined)
                 Y_train.append(normalized_prices[i + self.seql:i+self.seql+self.ahead].flatten())  
-        X_train = np.array(X_train)  
+        X_train = np.array(X_train)
         Y_train = np.array(Y_train)
 
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X_train, Y_train, test_size=0.2, random_state=42)

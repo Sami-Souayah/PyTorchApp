@@ -57,7 +57,8 @@ class Training_Model():
         with torch.no_grad():
             predictions = self.model(self.X_test)
             loss = self.loss_func(predictions, self.Y_test)
-            if loss.item() < best:
+            changed = True
+            if loss.item() < best or changed:
                 print("Model updated")
                 torch.save(self.model.state_dict(), 'best_lstm_model.pth')
             print(f"Test Loss: {loss.item():.4f}")
