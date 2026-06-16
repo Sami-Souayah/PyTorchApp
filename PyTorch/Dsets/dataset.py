@@ -1,4 +1,3 @@
-import yfinance as yf
 from sklearn.preprocessing import MinMaxScaler
 from Dsets.training_dataset import Training_Dataset
 import numpy as np
