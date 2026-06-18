@@ -18,7 +18,7 @@ class Evaluate():
         self.ticker = ticker
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = LSTMModel().to(self.device)
-        self.weights = self.model.load_state_dict(torch.load('/Users/sami/Documents/Projects/PyTorchApp/PyTorch/best_lstm_model.pth', weights_only=True))
+        self.weights = self.model.load_state_dict(torch.load('best_lstm_model.pth', weights_only=True))
         self.X_input = inst.X_input.to(self.device)
 
 
