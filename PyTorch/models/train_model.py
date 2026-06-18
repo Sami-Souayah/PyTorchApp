@@ -7,12 +7,17 @@ import torch.multiprocessing as mp
 
 class Training_Model():
     def __init__(self):
-
-        inst.create_data()
-        self.X_train = torch.tensor(inst.X_train, dtype=torch.float32)  
-        self.Y_train = torch.tensor(inst.Y_train, dtype=torch.float32)
-        self.X_test = torch.tensor(inst.X_test, dtype=torch.float32)
-        self.Y_test = torch.tensor(inst.Y_test, dtype=torch.float32)
+        inst = Transformations()
+        inst.load_data()
+        inst.build_features()
+        inst.split_data()
+        inst.fit_scalers()
+        inst.create_sequences()
+        inst.to_tensor()
+        self.X_train = inst.X_train
+        self.Y_train = inst.Y_train
+        self.X_test = inst.X_test
+        self.Y_test = inst.Y_test
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = LSTMModel().to(self.device)
         self.loss_func = torch.nn.MSELoss()
