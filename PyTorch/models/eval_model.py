@@ -7,14 +7,18 @@ import yfinance as yf
 
 
 class Evaluate():
-    def __init__(self, data):
-        self.inst = Dataset(data)
-        self.inst.create_input()
-        self.scaler = self.inst.price_scaler
+    def __init__(self, ticker):
+        inst = EvalData(ticker)
+        inst.find_ticker()
+        inst.build_eval_features()
+        inst.apply_scalers()
+        inst.create_eval_sequence()
+        inst.to_tensor()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.X_input = self.inst.X_input.to(self.device)
         self.model = LSTMModel().to(self.device)
         self.weights = self.model.load_state_dict(torch.load('/Users/sami/Documents/Projects/PyTorchApp/PyTorch/best_lstm_model.pth', weights_only=True))
+        self.X_input = inst.X_input.to(self.device)
+
 
     
     def eval(self):
