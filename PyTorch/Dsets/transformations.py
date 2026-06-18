@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+import torch
+
 
 class Transformations():
     def __init__(self):
@@ -83,3 +85,9 @@ class Transformations():
             else:
                 self.X_test = np.array(X, dtype=np.float32)
                 self.Y_test = np.array(Y, dtype=np.float32)
+
+    def to_tensor(self):
+        self.X_train = torch.tensor(self.X_train, dtype=torch.float32)
+        self.Y_train = torch.tensor(self.Y_train, dtype=torch.float32)
+        self.X_test = torch.tensor(self.X_test, dtype=torch.float32)
+        self.Y_test = torch.tensor(self.Y_test, dtype=torch.float32)
