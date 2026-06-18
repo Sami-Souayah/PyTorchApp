@@ -1,6 +1,9 @@
+import os
+
 import pandas as pd
 import yfinance as yf
 from yfinance import EquityQuery
+import time
 
 
 
@@ -36,15 +39,22 @@ class Dataset():
         return sorted(symbols)
     
     def download_prices(self):
-        df = yf.download(
-            tickers=self.tickers,
-            period="5y",
-            interval = "1d",
-            group_by="ticker",
-            auto_adjust=False,
-            threads=True
-        )
-        return df
+        all = []
+        for i in range(0, len(self.tickers), 200):
+            batch = self.tickers[i:i+200]
+            df = yf.download(
+                tickers=batch,
+                period="5y",
+                interval = "1d",
+                group_by="ticker",
+                auto_adjust=False,
+                threads=False,
+                timeout=60,
+            )
+            all.append(df)
+            print(f"{i+200} of {len(self.tickers)} completed")
+            time.sleep(3)
+        return pd.concat(all, axis=1)
     
     def reshape_data(self):
         rows = []
@@ -67,11 +77,15 @@ class Dataset():
         print(df.isnull().sum())
 
         df = df.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
+        counts = df.groupby("Ticker").size()
+        good = counts[counts >= 1200].index
+        df = df[df["Ticker"].isin(good)]
 
         if df.empty:
             print("No usable data to save.")
             return df
 
+        df["Date"] = pd.to_datetime(df["Date"])
         df = df.sort_values(["Ticker", "Date"])
         df.to_csv(path, index=False)
         print(f"Saved CSV to {path}")
@@ -80,5 +94,4 @@ class Dataset():
 
 if __name__ == "__main__":
     dataset = Dataset()
-    reshaped_df = dataset.reshape_data()
-    print(reshaped_df.head())
+    dataset.save_csv()
