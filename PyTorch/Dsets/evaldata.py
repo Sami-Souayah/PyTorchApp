@@ -48,7 +48,7 @@ class EvalData():
         if len(df) < self.seql:
             raise ValueError(f"Not enough data to create a sequence of length {self.seql} for ticker {self.ticker}")
 
-        features = self.df[["Close_norm", "Volatility_norm", "Volume_norm"]].values
+        features = df[["Close_norm", "Volatility_norm", "Volume_norm"]].values
         x_window = features[-self.seql:]
         
         self.X_input = np.array([x_window], dtype=np.float32)

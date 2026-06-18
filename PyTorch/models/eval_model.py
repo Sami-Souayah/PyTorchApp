@@ -14,6 +14,8 @@ class Evaluate():
         inst.apply_scalers()
         inst.create_eval_sequence()
         inst.to_tensor()
+        self.scaler = inst.price_scaler
+        self.ticker = ticker
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = LSTMModel().to(self.device)
         self.weights = self.model.load_state_dict(torch.load('/Users/sami/Documents/Projects/PyTorchApp/PyTorch/best_lstm_model.pth', weights_only=True))
@@ -30,9 +32,8 @@ class Evaluate():
         predicted_price_flat = predicted_price.flatten()
         predicted_price_rounded = [round(float(p),2) for p in predicted_price_flat]
 
-        last_week_prices = predicted_price_rounded[-7:]
 
-        print(f"Prices for {self.inst.name}:",predicted_price_rounded)
+        print(f"Prices for {self.ticker}:",predicted_price_rounded)
         days = list(range(1, len(predicted_price_rounded) + 1))
         
         
@@ -52,7 +53,7 @@ class Evaluate():
         )
         plt.ylim(min(predicted_price_rounded) * 0.95, max(predicted_price_rounded) * 1.05)
 
-        plt.title(f"Predicted Prices for the week for {self.inst.name}")
+        plt.title(f"Predicted Prices for the week for {self.ticker}")
         plt.xlabel("Day")
         plt.ylabel("Price")
         plt.grid(True)
