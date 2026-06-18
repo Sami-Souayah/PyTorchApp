@@ -37,6 +37,8 @@ class Training_Model():
             self.model.train()
             epoch_loss = 0.0
             for x, y in train_loader:
+                x = x.to(self.device)
+                y = y.to(self.device)
                 self.optimizer.zero_grad()
                 output = self.model(x)
                 loss = self.loss_func(output, y)
@@ -47,7 +49,7 @@ class Training_Model():
             avg = epoch_loss/len(train_loader)
             train_losses.append(avg)
             self.scheduler.step(avg)
-            print(f"Epoch: {i+1} Loss: {loss.item():>4f}")
+            print(f"Epoch: {i+1} Loss: {avg:>4f}")
 
         plt.plot(range(num_epochs), train_losses)
         plt.title("Training Loss Over Epochs")
@@ -60,8 +62,8 @@ class Training_Model():
         self.model.eval() 
         best = float('inf')
         with torch.no_grad():
-            predictions = self.model(self.X_test)
-            loss = self.loss_func(predictions, self.Y_test)
+            predictions = self.model(self.X_test.to(self.device))
+            loss = self.loss_func(predictions, self.Y_test.to(self.device))
             changed = False
             if loss.item() < best or changed:
                 print("Model updated")
