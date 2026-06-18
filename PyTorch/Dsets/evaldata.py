@@ -1,6 +1,6 @@
 import torch
 import yfinance as yf
-from transformations import Transformations
+from Dsets.transformations import Transformations
 import numpy as np
 import pandas as pd
 
@@ -43,19 +43,19 @@ class EvalData():
 
     def create_eval_sequence(self):
         X = []
-        for i, j in self.feature_df.groupby("Ticker"):
+        for i, j in self.feature_df:
             j = j.sort_values("Date")
 
             features = j[["Close_norm", "Volatility_norm", "Volume_norm"]].values
-            targets = j["Close_norm"].values
 
             max_val = len(j) - self.seql + 1
 
-            for k in range(max_val):
-                x_window = features[k:]
+            if max_val <= 0:
+                raise ValueError(f"Not enough data to create a sequence of length {self.seql} for ticker {i}")
+            
+            x_window = features[max_val:]
 
-                if len(x_window) == self.seql:
-                    X.append(x_window)
+            X.append(x_window)
         self.X_input = np.array(X, dtype=np.float32)
 
     def to_tensor(self):
