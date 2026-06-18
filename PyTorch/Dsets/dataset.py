@@ -17,7 +17,7 @@ class Dataset():
     
 
     def get_tickers(self):
-        q = EquityQuery("and", [EquityQuery("eq", ["region", "US"]), EquityQuery("is-in", ["Exchange", "NMS", "NYQ"]),
+        q = EquityQuery("and", [EquityQuery("eq", ["region", "us"]), EquityQuery("is-in", ["exchange", "NMS", "NYQ"]),
                                 EquityQuery("gt", ["intradayprice", 5]), EquityQuery("gt", ["avgdailyvol3m", 200000])])
         
         symbols = set()
@@ -56,9 +56,35 @@ class Dataset():
         rows = []
         for i in self.df.columns.levels[0]:
             pee = self.df[i].copy()
+            if pee.empty:
+                continue
+            if pee[["Open", "High", "Low", "Close", "Volume"]].isnull().all().all():
+                continue
             pee["Ticker"] = i
             pee = pee.reset_index()
             rows.append(pee)
         return pd.concat(rows, ignore_index=True)
+    
+    def save_csv(self):
+        path = "cache/training_data.csv"
+        df = self.reshape_data()
+
+        print("Null counts by column:")
+        print(df.isnull().sum())
+
+        df = df.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
+
+        if df.empty:
+            print("No usable data to save.")
+            return df
+
+        df = df.sort_values(["Ticker", "Date"])
+        df.to_csv(path, index=False)
+        print(f"Saved CSV to {path}")
+        return df
             
 
+if __name__ == "__main__":
+    dataset = Dataset()
+    reshaped_df = dataset.reshape_data()
+    print(reshaped_df.head())
