@@ -1,9 +1,10 @@
 import torch
 from models.utils.nn import LSTMModel  
-from Dsets.dataset import Dataset
+from Dsets.evaldata import EvalData
 import os
 import matplotlib.pyplot as plt
 import yfinance as yf
+
 
 class Evaluate():
     def __init__(self, data):
@@ -15,8 +16,6 @@ class Evaluate():
         self.model = LSTMModel().to(self.device)
         self.weights = self.model.load_state_dict(torch.load('/Users/sami/Documents/Projects/PyTorchApp/PyTorch/best_lstm_model.pth', weights_only=True))
 
-
-    
     
     def eval(self):
         print("Using device:", self.device)

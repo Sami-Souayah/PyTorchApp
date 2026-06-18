@@ -30,6 +30,8 @@ class EvalData():
     
     def build_eval_features(self):
         df = self.df.copy()
+        df = df.reset_index()
+        df["Ticker"] = self.ticker
         df["Volatility"] = df["High"] - df["Low"]
         df = df[["Date", "Ticker", "Close", "Volume", "Volatility"]]
         df["Date"] = pd.to_datetime(df["Date"])
@@ -42,21 +44,14 @@ class EvalData():
         self.feature_df["Volume_norm"] = self.volume_scaler.transform(self.feature_df[["Volume"]])
 
     def create_eval_sequence(self):
-        X = []
-        for i, j in self.feature_df:
-            j = j.sort_values("Date")
+        df = self.feature_df.sort_values("Date")
+        if len(df) < self.seql:
+            raise ValueError(f"Not enough data to create a sequence of length {self.seql} for ticker {self.ticker}")
 
-            features = j[["Close_norm", "Volatility_norm", "Volume_norm"]].values
-
-            max_val = len(j) - self.seql + 1
-
-            if max_val <= 0:
-                raise ValueError(f"Not enough data to create a sequence of length {self.seql} for ticker {i}")
-            
-            x_window = features[max_val:]
-
-            X.append(x_window)
-        self.X_input = np.array(X, dtype=np.float32)
+        features = self.feature_df[["Close_norm", "Volatility_norm", "Volume_norm"]].values
+        x_window = features[-self.seql:]
+        
+        self.X_input = np.array(x_window, dtype=np.float32)
 
     def to_tensor(self):
         self.X_input = torch.tensor(self.X_input, dtype=torch.float32)
