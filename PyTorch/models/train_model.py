@@ -14,6 +14,7 @@ class Training_Model():
         inst.fit_scalers()
         inst.create_sequences()
         inst.to_tensor()
+        self.best_loss = float("inf")
         self.X_train = inst.X_train
         self.Y_train = inst.Y_train
         self.X_test = inst.X_test
@@ -60,14 +61,13 @@ class Training_Model():
 
     def test(self):
         self.model.eval() 
-        best = float('inf')
         with torch.no_grad():
             predictions = self.model(self.X_test.to(self.device))
             loss = self.loss_func(predictions, self.Y_test.to(self.device))
-            changed = False
-            if loss.item() < best or changed:
-                print("Model updated")
+            if loss.item() < self.best_loss:
+                self.best_loss = loss.item()
                 torch.save(self.model.state_dict(), 'best_lstm_model.pth')
+                print("Model updated")
             print(f"Test Loss: {loss.item():.4f}")
 
 
