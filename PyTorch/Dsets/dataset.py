@@ -6,8 +6,7 @@ from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta as delta
 import os
 import pandas as pd
-import pandas_datareader.data as web
-
+import yfinance as yf
 
 
 
