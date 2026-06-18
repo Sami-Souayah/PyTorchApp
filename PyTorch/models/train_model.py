@@ -1,13 +1,13 @@
 import torch.optim as optim
 from models.utils.nn import LSTMModel
-from Dsets.training_dataset import Training_Dataset
 import torch
+from Dsets.transformations import Transformations
 import matplotlib.pyplot as plt
 import torch.multiprocessing as mp
 
 class Training_Model():
     def __init__(self):
-        inst = Training_Dataset()
+
         inst.create_data()
         self.X_train = torch.tensor(inst.X_train, dtype=torch.float32)  
         self.Y_train = torch.tensor(inst.Y_train, dtype=torch.float32)

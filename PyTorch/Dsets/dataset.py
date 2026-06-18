@@ -78,7 +78,7 @@ class Dataset():
 
         df = df.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
         counts = df.groupby("Ticker").size()
-        good = counts[counts >= 1200].index
+        good = counts[counts >= 1250].index
         df = df[df["Ticker"].isin(good)]
 
         if df.empty:
