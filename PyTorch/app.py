@@ -1,7 +1,6 @@
 from models.eval_model import Evaluate
 from models.train_model import Training_Model
 from Dsets.dataset import Dataset
-from Dsets.training_dataset import Training_Dataset
 
 
 def evaluate_stuff():
@@ -15,4 +14,5 @@ def train():
     trnmdl.test()
 
 
-print(train())
+if __name__ == "__main__":
+    print(train())
