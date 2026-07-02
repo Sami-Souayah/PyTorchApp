@@ -8,9 +8,9 @@ def evaluate_stuff():
     return inste.eval()
 
 
-def train():
+def train(epoch):
     trnmdl = Training_Model()
-    trnmdl.train(35)
+    trnmdl.train(epoch)
     trnmdl.test()
 
 
